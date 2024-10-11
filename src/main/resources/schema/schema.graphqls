@@ -1,0 +1,79 @@
+type Location {
+    id: ID!
+    name: String
+    address: String
+}
+
+type Customer{
+    id: ID!
+    name: String
+    email: String
+    phoneNumber: String
+}
+type Tour{
+    id: ID!
+    title : String
+    description : String
+    location: Location
+}
+type Booking{
+    id: ID!
+    customer: Customer
+    tour: Tour
+    active: Boolean
+
+}
+
+input SubmittedLocation {
+    name: String
+    address: String
+}
+input SubmittedCustomer{
+    name: String
+    email: String
+    phoneNumber: String
+}
+input SubmittedTour{
+    title : String
+    description : String
+    location: SubmittedLocation
+}
+input SubmittedBooking{
+    customer: SubmittedCustomer
+    tour: SubmittedTour
+    active: Boolean
+}
+
+type Query {
+    locations(nameFilter: String): [Location]
+    customers(nameFilter: String): [Customer]
+    tours: [Tour]
+    bookings: [Booking]
+}
+
+
+type Mutation {
+    addLocation(location: SubmittedLocation): Location
+
+    updateLocation(id: ID!, location: SubmittedLocation): Location
+
+    deleteLocation(id: ID!): String
+
+    addCustomer(customer: SubmittedCustomer): Customer
+
+    updateCustomer(id: ID!, customer: SubmittedCustomer): Customer
+
+    deleteCustomer(id: ID!): String
+
+    addTour(tour: SubmittedTour): Tour
+
+    updateTour(id: ID!, tour: SubmittedTour): Tour
+
+    deleteTour(id: ID!): String
+
+    addBooking(booking: SubmittedBooking): Booking
+
+    updateBooking(id: ID!, booking: SubmittedBooking): Booking
+
+    deleteBooking(id: ID!): String
+}
