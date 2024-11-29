@@ -1,7 +1,6 @@
 package com.example.Sop.controllers;
 
 import com.example.Sop.dto.TourDto;
-import com.example.Sop.models.Tour;
 import com.example.Sop.services.TourService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
@@ -19,8 +18,11 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RequestMapping("/tours")
 public class TourController {
 
-    @Autowired
     private TourService tourService;
+
+    public TourController(TourService tourService) {
+        this.tourService = tourService;
+    }
 
     @GetMapping
     public CollectionModel<EntityModel<TourDto>> getAllTours() {

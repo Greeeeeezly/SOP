@@ -1,6 +1,5 @@
 package com.example.Sop.datafetchers;
 
-import com.example.Sop.dto.LocationDto;
 import com.example.Sop.dto.TourDto;
 import com.example.Sop.services.TourService;
 import com.netflix.graphql.dgs.DgsComponent;
@@ -17,7 +16,6 @@ import java.util.List;
 public class TourDataFetcher {
     private final TourService tourService;
 
-    @Autowired
     public TourDataFetcher(TourService tourService) {
         this.tourService = tourService;
     }
@@ -29,9 +27,7 @@ public class TourDataFetcher {
 
     @DgsMutation
     public TourDto addTour(@InputArgument SubmittedTour tour) {
-        TourDto newTour = new TourDto(tour.title, tour.description, tour.startDate, tour.endDate);
-        LocationDto locationDto = tour.location;
-        newTour.setLocation(locationDto);
+        TourDto newTour = new TourDto(tour.name, tour.availableSeats);
         newTour.setId(tourService.createTour(newTour).getId());
         return newTour;
     }
@@ -40,11 +36,8 @@ public class TourDataFetcher {
     public TourDto updateTour(@InputArgument Long id, @InputArgument SubmittedTour tour) {
         TourDto existingTour = tourService.getTourById(id);
         if (existingTour != null) {
-            existingTour.setTitle(tour.title());
-            existingTour.setDescription(tour.description());
-            existingTour.setLocation(tour.location());
-            existingTour.setStartDate(tour.startDate());
-            existingTour.setEndDate(tour.endDate());
+            existingTour.setName(tour.name);
+            existingTour.setAvailableSeats(tour.availableSeats);
             return tourService.updateTour(id, existingTour);
         }
         return null;
@@ -55,5 +48,5 @@ public class TourDataFetcher {
         tourService.deleteTour(id);
     }
 
-    record SubmittedTour(String title, String description, LocationDto location, LocalDateTime startDate, LocalDateTime endDate) {}
+    record SubmittedTour(String name, Integer availableSeats) {}
 }

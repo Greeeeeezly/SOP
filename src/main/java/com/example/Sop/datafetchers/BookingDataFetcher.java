@@ -1,7 +1,7 @@
 package com.example.Sop.datafetchers;
 
 import com.example.Sop.dto.BookingDto;
-import com.example.Sop.dto.CustomerDto;
+import com.example.Sop.dto.UserDto;
 import com.example.Sop.dto.TourDto;
 import com.example.Sop.services.BookingService;
 import com.netflix.graphql.dgs.DgsComponent;
@@ -18,7 +18,6 @@ import java.util.List;
 
         private final BookingService bookingService;
 
-        @Autowired
         public BookingDataFetcher(BookingService bookingService) {
             this.bookingService = bookingService;
         }
@@ -29,29 +28,12 @@ import java.util.List;
         }
 
         @DgsMutation
-        public BookingDto addBooking(@InputArgument SubmittedBooking booking) {
+        public String addBooking(@InputArgument SubmittedBooking booking) {
             BookingDto newBooking = new BookingDto();
-            CustomerDto customerDto = booking.customer();
+            UserDto userDto = booking.user();
             TourDto tourDto = booking.tour();
-            newBooking.setCustomer(customerDto);
             newBooking.setTour(tourDto);
-            newBooking.setBookingDate(booking.bookingDate());
-            newBooking.setActive(booking.active());
-
-            return bookingService.createBooking(newBooking);
-        }
-
-        @DgsMutation
-        public BookingDto updateBooking(@InputArgument Long id, @InputArgument SubmittedBooking booking) {
-            BookingDto existingBooking = bookingService.getBookingById(id);
-            if (existingBooking != null) {
-                existingBooking.setCustomer(booking.customer());
-                existingBooking.setTour(booking.tour());
-                existingBooking.setBookingDate(booking.bookingDate());
-                existingBooking.setActive(booking.active());
-                return bookingService.updateBooking(id, existingBooking);
-            }
-            return null;
+            return bookingService.createBooking(tourDto.getId(),userDto.getId());
         }
 
         @DgsMutation
@@ -59,5 +41,5 @@ import java.util.List;
             bookingService.deleteBooking(id);
         }
 
-        record SubmittedBooking(CustomerDto customer, TourDto tour, LocalDateTime bookingDate, boolean active) {}
+        record SubmittedBooking(UserDto user, TourDto tour) {}
     }

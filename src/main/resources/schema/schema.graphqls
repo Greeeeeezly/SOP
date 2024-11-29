@@ -1,69 +1,48 @@
-type Location {
-    id: ID!
-    name: String
-    address: String
-}
 
-type Customer{
+type User{
     id: ID!
     name: String
     email: String
-    phoneNumber: String
+    priority: Boolean
 }
 type Tour{
     id: ID!
-    title : String
-    description : String
-    location: Location
+    name : String
+    availableSeats : Int
 }
 type Booking{
     id: ID!
-    customer: Customer
+    user: User
     tour: Tour
-    active: Boolean
-
 }
-
-input SubmittedLocation {
-    name: String
-    address: String
-}
-input SubmittedCustomer{
+input SubmittedUser{
     name: String
     email: String
-    phoneNumber: String
+    priority: Boolean
 }
 input SubmittedTour{
     title : String
     description : String
-    location: SubmittedLocation
+    availableSeats : Int
 }
 input SubmittedBooking{
-    customer: SubmittedCustomer
+    user: SubmittedUser
     tour: SubmittedTour
-    active: Boolean
 }
 
 type Query {
-    locations(nameFilter: String): [Location]
-    customers(nameFilter: String): [Customer]
+    users(nameFilter: String): [User]
     tours: [Tour]
     bookings: [Booking]
 }
 
 
 type Mutation {
-    addLocation(location: SubmittedLocation): Location
+    addUser(user: SubmittedUser): User
 
-    updateLocation(id: ID!, location: SubmittedLocation): Location
+    updateUser(id: ID!, user: SubmittedUser): User
 
-    deleteLocation(id: ID!): String
-
-    addCustomer(customer: SubmittedCustomer): Customer
-
-    updateCustomer(id: ID!, customer: SubmittedCustomer): Customer
-
-    deleteCustomer(id: ID!): String
+    deleteUser(id: ID!): String
 
     addTour(tour: SubmittedTour): Tour
 
@@ -73,7 +52,7 @@ type Mutation {
 
     addBooking(booking: SubmittedBooking): Booking
 
-    updateBooking(id: ID!, booking: SubmittedBooking): Booking
+#    updateBooking(id: ID!, booking: SubmittedBooking): Booking
 
     deleteBooking(id: ID!): String
 }

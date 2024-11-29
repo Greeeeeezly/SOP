@@ -1,5 +1,4 @@
 package com.example.Sop.controllers;
-import org.springframework.hateoas.Link;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,10 +15,9 @@ public class RootController {
         RepresentationModel<?> model = new RepresentationModel<>();
 
         // Добавляем ссылки на возможные действия
-        model.add(linkTo(methodOn(CustomerController.class).getAllCustomers()).withRel("customers"));
+        model.add(linkTo(methodOn(UserController.class).getAllCustomers()).withRel("customers"));
         model.add(linkTo(methodOn(TourController.class).getAllTours()).withRel("tours"));
         model.add(linkTo(methodOn(BookingController.class).getAllBookings()).withRel("bookings"));
-        model.add(linkTo(methodOn(LocationController.class).getAllLocations()).withRel("locations"));
 
         return model;
     }

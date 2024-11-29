@@ -1,9 +1,9 @@
 package com.example.Sop.repositories;
 
-import com.example.Sop.models.Customer;
+import com.example.Sop.models.Subscription;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CustomerRepository extends JpaRepository<Customer, Long> {
+public interface SubscriptionRepository extends JpaRepository<Subscription, Long> {
 }

@@ -1,31 +1,38 @@
-// src/main/java/com/example/Sop/services/BookingService.java
 package com.example.Sop.services;
-
 import com.example.Sop.dto.BookingDto;
 import com.example.Sop.models.Booking;
-import com.example.Sop.models.Customer;
+import com.example.Sop.models.Subscription;
 import com.example.Sop.models.Tour;
+import com.example.Sop.models.User;
 import com.example.Sop.repositories.BookingRepository;
-import com.example.Sop.repositories.CustomerRepository;
+import com.example.Sop.repositories.SubscriptionRepository;
 import com.example.Sop.repositories.TourRepository;
+import com.example.Sop.repositories.UserRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
 public class BookingService {
 
-    private final BookingRepository bookingRepository;
-    private final CustomerRepository customerRepository;
+    private final RabbitTemplate rabbitTemplate;
     private final TourRepository tourRepository;
+    private final SubscriptionRepository subscriptionRepository;
+    private final UserRepository userRepository;
+    private final BookingRepository bookingRepository;
+
     private final ModelMapper modelMapper;
 
-    public BookingService(BookingRepository bookingRepository, CustomerRepository customerRepository, TourRepository tourRepository, ModelMapper modelMapper) {
-        this.bookingRepository = bookingRepository;
-        this.customerRepository = customerRepository;
+    public BookingService(RabbitTemplate rabbitTemplate, TourRepository tourRepository, SubscriptionRepository subscriptionRepository, UserRepository userRepository, BookingRepository bookingRepository, ModelMapper modelMapper) {
+        this.rabbitTemplate = rabbitTemplate;
         this.tourRepository = tourRepository;
+        this.subscriptionRepository = subscriptionRepository;
+        this.userRepository = userRepository;
+        this.bookingRepository = bookingRepository;
         this.modelMapper = modelMapper;
     }
 
@@ -42,50 +49,38 @@ public class BookingService {
         return modelMapper.map(booking, BookingDto.class);
     }
 
-    public BookingDto createBooking(BookingDto bookingDto) {
-        Booking booking = modelMapper.map(bookingDto, Booking.class);
-
-        Customer customer = customerRepository.findById(bookingDto.getCustomer().getId())
-                .orElseThrow(() -> new RuntimeException("Customer not found with id: " + bookingDto.getCustomer().getId()));
-        booking.setCustomer(customer);
-
-        Tour tour = tourRepository.findById(bookingDto.getTour().getId())
-                .orElseThrow(() -> new RuntimeException("Tour not found with id: " + bookingDto.getTour().getId()));
-        booking.setTour(tour);
-
-        Booking savedBooking = bookingRepository.save(booking);
-
-        return modelMapper.map(savedBooking, BookingDto.class);
+    public String createBooking(Long tourId, Long userId) {
+        Tour tour = tourRepository.findById(tourId)
+                .orElseThrow(() -> new NoSuchElementException("Tour with ID " + tourId + " not found"));
+        if (tour.getAvailableSeats() > 0) {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new NoSuchElementException("User with ID " + userId + " not found"));
+            tour.setAvailableSeats(tour.getAvailableSeats() - 1);
+            tourRepository.save(tour);
+            Booking booking = new Booking(user, tour);
+            bookingRepository.save(booking);
+            return "Booking";
+        } else {
+            createSubscription(tourId, userId);
+            return "Subscription";
+        }
     }
 
-    public BookingDto updateBooking(Long id, BookingDto bookingDto) {
-        Booking existingBooking = bookingRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Booking not found with id: " + id));
-
-        existingBooking.setBookingDate(bookingDto.getBookingDate());
-        existingBooking.setActive(bookingDto.isActive());
-
-        if (!existingBooking.getCustomer().getId().equals(bookingDto.getCustomer().getId())) {
-            Customer newCustomer = customerRepository.findById(bookingDto.getCustomer().getId())
-                    .orElseThrow(() -> new RuntimeException("Customer not found with id: " + bookingDto.getCustomer().getId()));
-            existingBooking.setCustomer(newCustomer);
-        }
-
-        if (!existingBooking.getTour().getId().equals(bookingDto.getTour().getId())) {
-            Tour newTour = tourRepository.findById(bookingDto.getTour().getId())
-                    .orElseThrow(() -> new RuntimeException("Tour not found with id: " + bookingDto.getTour().getId()));
-            existingBooking.setTour(newTour);
-        }
-
-        Booking updatedBooking = bookingRepository.save(existingBooking);
-
-        return modelMapper.map(updatedBooking, BookingDto.class);
+    public void createSubscription(Long tourId, Long userId) {
+        Tour tour = tourRepository.findById(tourId)
+                .orElseThrow(() -> new NoSuchElementException("Tour with ID " + tourId + " not found"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NoSuchElementException("User with ID " + userId + " not found"));
+        Subscription subscription = new Subscription(user, tour);
+        subscriptionRepository.save(subscription);
     }
 
-
-    public void deleteBooking(Long id) {
-        Booking booking = bookingRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Booking not found with id: " + id));
+    public void deleteBooking(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new NoSuchElementException("Booking with ID " + bookingId + " not found"));
+        Tour tour = booking.getTour();
         bookingRepository.delete(booking);
+
+        rabbitTemplate.convertAndSend("notificationExchange", "notification.priority", tour.getId());
     }
 }

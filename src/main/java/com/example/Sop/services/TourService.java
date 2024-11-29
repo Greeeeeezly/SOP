@@ -42,11 +42,8 @@ public class TourService {
     public TourDto updateTour(Long id, TourDto updatedTourDto) {
         Tour existingTour = tourRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Tour not found with id: " + id));
-
-        existingTour.setTitle(updatedTourDto.getTitle());
-        existingTour.setDescription(updatedTourDto.getDescription());
-        existingTour.setStartDate(updatedTourDto.getStartDate());
-        existingTour.setEndDate(updatedTourDto.getEndDate());
+        existingTour.setName(updatedTourDto.getName());
+        existingTour.setAvailableSeats(updatedTourDto.getAvailableSeats());
 
         Tour updatedTour = tourRepository.save(existingTour);
         return modelMapper.map(updatedTour, TourDto.class);

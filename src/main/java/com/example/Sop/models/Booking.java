@@ -1,45 +1,51 @@
 package com.example.Sop.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
-
 @Entity
-public class Booking extends BaseEntity{
+public class Booking {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "customer_id")
-    @JsonBackReference(value = "customer-bookings")
-    private Customer customer;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @ManyToOne
-    @JoinColumn(name = "tour_id")
-    @JsonBackReference(value = "tour-bookings")
+    @JoinColumn(name = "tour_id", nullable = false)
     private Tour tour;
 
-    private LocalDateTime bookingDate;
 
-    private boolean isActive;
+    public Booking(Long id, User user, Tour tour) {
+        this.id = id;
+        this.user = user;
+        this.tour = tour;
+    }
+
+    public Booking(User user, Tour tour) {
+        this.user = user;
+        this.tour = tour;
+    }
 
     public Booking() {
     }
 
-    public boolean isActive() {
-        return isActive;
+
+    public Long getId() {
+        return id;
     }
 
-    public void setActive(boolean active) {
-        isActive = active;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public Customer getCustomer() {
-        return customer;
+    public User getUser() {
+        return user;
     }
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Tour getTour() {
@@ -49,12 +55,5 @@ public class Booking extends BaseEntity{
     public void setTour(Tour tour) {
         this.tour = tour;
     }
-
-    public LocalDateTime getBookingDate() {
-        return bookingDate;
-    }
-
-    public void setBookingDate(LocalDateTime bookingDate) {
-        this.bookingDate = bookingDate;
-    }
 }
+

@@ -2,11 +2,10 @@ package com.example.Sop.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import java.time.LocalDateTime;
+import java.io.Serializable;
 
-public class BookingDto {
+public class BookingDto implements Serializable {
 
     private Long id;
 
@@ -18,21 +17,10 @@ public class BookingDto {
         this.id = id;
     }
     @JsonBackReference
-    private CustomerDto customer;
+    private UserDto user;
     @JsonBackReference(value = "tour-bookings")
     private TourDto tour;
 
-    private LocalDateTime bookingDate;
-
-    private boolean isActive;
-
-    public CustomerDto getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(CustomerDto customer) {
-        this.customer = customer;
-    }
 
     public TourDto getTour() {
         return tour;
@@ -42,30 +30,34 @@ public class BookingDto {
         this.tour = tour;
     }
 
-    public LocalDateTime getBookingDate() {
-        return bookingDate;
+    public UserDto getUser() {
+        return user;
     }
 
-    public void setBookingDate(LocalDateTime bookingDate) {
-        this.bookingDate = bookingDate;
+    public void setUser(UserDto user) {
+        this.user = user;
     }
 
-    public boolean isActive() {
-        return isActive;
-    }
 
-    public void setActive(boolean active) {
-        isActive = active;
-    }
-
-    public BookingDto(Long id, CustomerDto customer, TourDto tour, LocalDateTime bookingDate, boolean isActive) {
-        this.id=id;
-        this.customer = customer;
+    public BookingDto(UserDto user, TourDto tour) {
+        this.user = user;
         this.tour = tour;
-        this.bookingDate = bookingDate;
-        this.isActive = isActive;
+    }
+
+    public BookingDto(Long id, UserDto user, TourDto tour) {
+        this.id = id;
+        this.user = user;
+        this.tour = tour;
     }
 
     public BookingDto() {
+    }
+
+    @Override
+    public String toString() {
+        return "BookingDto{" +
+                "id=" + id +
+                ", tour=" + tour +
+                '}';
     }
 }

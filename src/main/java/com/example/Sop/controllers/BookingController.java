@@ -2,10 +2,12 @@ package com.example.Sop.controllers;
 
 import com.example.Sop.ActionModel;
 import com.example.Sop.dto.BookingDto;
+import com.example.Sop.dto.BookingRequest;
 import com.example.Sop.services.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,8 +21,11 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RequestMapping("/bookings")
 public class BookingController {
 
-    @Autowired
     private BookingService bookingService;
+
+    public BookingController(BookingService bookingService) {
+        this.bookingService = bookingService;
+    }
 
     @GetMapping
     public CollectionModel<EntityModel<BookingDto>> getAllBookings() {
@@ -30,15 +35,12 @@ public class BookingController {
                             linkTo(methodOn(BookingController.class).getBookingById(booking.getId())).withSelfRel());
 
                     // Создаем actions
-                    ActionModel updateAction = new ActionModel("update", "POST",
-                            linkTo(methodOn(BookingController.class).updateBooking(booking.getId(), null)).withSelfRel());
                     ActionModel deleteAction = new ActionModel("delete", "DELETE",
                             linkTo(methodOn(BookingController.class).deleteBooking(booking.getId())).withSelfRel());
 
                     // Добавляем действия к модели
                     bookingModel.add(
                             linkTo(methodOn(BookingController.class).getAllBookings()).withRel("bookings"),
-                            updateAction.getLink().withRel(updateAction.getName()).withType(updateAction.getMethod()),
                             deleteAction.getLink().withRel(deleteAction.getName()).withType(deleteAction.getMethod())
                     );
 
@@ -55,34 +57,22 @@ public class BookingController {
         BookingDto booking = bookingService.getBookingById(id);
 
         // Создаем actions
-        ActionModel updateAction = new ActionModel("update", "POST",
-                linkTo(methodOn(BookingController.class).updateBooking(id, null)).withSelfRel());
         ActionModel deleteAction = new ActionModel("delete", "DELETE",
                 linkTo(methodOn(BookingController.class).deleteBooking(id)).withSelfRel());
 
         return EntityModel.of(booking,
                 linkTo(methodOn(BookingController.class).getBookingById(id)).withSelfRel(),
                 linkTo(methodOn(BookingController.class).getAllBookings()).withRel("bookings"),
-                updateAction.getLink().withRel(updateAction.getName()).withType(updateAction.getMethod()),
                 deleteAction.getLink().withRel(deleteAction.getName()).withType(deleteAction.getMethod())
         );
     }
 
     @PostMapping
-    public EntityModel<BookingDto> createBooking(@RequestBody BookingDto booking) {
-        BookingDto createdBooking = bookingService.createBooking(booking);
-        return EntityModel.of(createdBooking,
-                linkTo(methodOn(BookingController.class).getBookingById(createdBooking.getId())).withSelfRel(),
-                linkTo(methodOn(BookingController.class).getAllBookings()).withRel("bookings"));
+    public ResponseEntity<String> createBooking(@RequestBody BookingRequest bookingRequest) {
+        String action = bookingService.createBooking(bookingRequest.getTourId(), bookingRequest.getUserId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(action);
     }
 
-    @PostMapping("/{id}")
-    public EntityModel<BookingDto> updateBooking(@PathVariable Long id, @RequestBody BookingDto updatedBooking) {
-        BookingDto booking = bookingService.updateBooking(id, updatedBooking);
-        return EntityModel.of(booking,
-                linkTo(methodOn(BookingController.class).getBookingById(booking.getId())).withSelfRel(),
-                linkTo(methodOn(BookingController.class).getAllBookings()).withRel("bookings"));
-    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteBooking(@PathVariable Long id) {
