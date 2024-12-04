@@ -43,12 +43,12 @@ public class RabbitMQConfig {
 
     @Bean
     public Binding bindingPriorityWS(TopicExchange exchange, Queue wsPriorityQueue) {
-        return BindingBuilder.bind(wsPriorityQueue).to(exchange).with("notification.priority");
+        return BindingBuilder.bind(wsPriorityQueue).to(exchange).with("notification.wspriority");
     }
 
     @Bean
     public Binding bindingDefaultWS(TopicExchange exchange, Queue wsDefaultQueue) {
-        return BindingBuilder.bind(wsDefaultQueue).to(exchange).with("notification.default");
+        return BindingBuilder.bind(wsDefaultQueue).to(exchange).with("notification.wsdefault");
     }
 }
 

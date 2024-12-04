@@ -38,7 +38,6 @@ public class PriorityConsumerService {
     public Queue myQueue() {
         return new Queue("priorityQueue", true);
     }
-
     @Transactional
     @RabbitListener(queues = "priorityQueue")
     public void receiveNotification(Long tourId) {
@@ -55,5 +54,6 @@ public class PriorityConsumerService {
             }
         }
         rabbitTemplate.convertAndSend("notificationExchange", "notification.default", tourId);
+        rabbitTemplate.convertAndSend("notificationExchange", "notification.wsdefault", "priority users ignored tour :" + tourId);
     }
 }

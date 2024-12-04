@@ -17,12 +17,12 @@ public class WsApplication {
     private NotificationService notificationService;
     @Bean
     public Queue priorityQueue() {
-        return new Queue(priorityQueue, false);
+        return new Queue(priorityQueue, true);
     }
 
     @Bean
     public Queue defaultQueue() {
-        return new Queue(defaultQueue, false);
+        return new Queue(defaultQueue, true);
     }
 
     @RabbitListener(queues = priorityQueue)
@@ -34,7 +34,7 @@ public class WsApplication {
     @RabbitListener(queues = defaultQueue)
     public void listenDefault(String message) {
         System.out.println("Message read from defaultQueue : " + message);
-        notificationService.sendNotification("message from default queue" + message);
+        notificationService.sendNotification("message from default " + message);
     }
     public static void main(String[] args) {
         SpringApplication.run(WsApplication.class, args);

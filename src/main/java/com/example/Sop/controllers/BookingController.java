@@ -19,7 +19,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/bookings")
-public class BookingController {
+public class BookingController{
 
     private BookingService bookingService;
 

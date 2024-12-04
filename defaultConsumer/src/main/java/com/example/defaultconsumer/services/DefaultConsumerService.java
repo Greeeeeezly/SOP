@@ -52,6 +52,7 @@ public class DefaultConsumerService {
                     bookingService.createBooking(tourId, user.getId());
                     subscriptionRepository.deleteByUserIdAndTourId(user.getId(), tourId);
                     System.out.println("Обычный пользователь " + user.getName() + " забронировал тур номер " + tourId);
+                    rabbitTemplate.convertAndSend("notificationExchange", "notification.wsdefault", "default user :" +user.getId() + " booked " + tourId);
                     return;
                 }
             }
@@ -60,5 +61,7 @@ public class DefaultConsumerService {
         tourRepository.save(tour);
         subscriptionRepository.deleteAllByTourId(tourId);
         System.out.println("Удаление завершено.");
+        rabbitTemplate.convertAndSend("notificationExchange", "notification.wsdefault", "nobody booked, subscriptions deleted for tour "+ tourId);
+
     }
 }

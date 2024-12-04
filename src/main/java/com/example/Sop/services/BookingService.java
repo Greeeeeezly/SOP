@@ -82,5 +82,6 @@ public class BookingService {
         bookingRepository.delete(booking);
 
         rabbitTemplate.convertAndSend("notificationExchange", "notification.priority", tour.getId());
+        rabbitTemplate.convertAndSend("notificationExchange", "notification.wspriority", "booking deleted in tour" + tour.getId().toString() + " user: " + booking.getUser().getId());
     }
 }
