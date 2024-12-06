@@ -13,12 +13,16 @@ public class User {
     private String email;
     private boolean priority;
 
+    @Column(nullable = false)
+    private boolean isActive;  // Поле isActive только для приоритетных пользователей
+
     public User() {}
 
-    public User(String name, String email, boolean priority) {
+    public User(String name, String email, boolean priority, boolean isActive) {
         this.name = name;
         this.email = email;
         this.priority = priority;
+        this.isActive = priority ? isActive : false;  // Если не приоритетный, isActive всегда false
     }
 
     public Long getId() {
@@ -51,5 +55,17 @@ public class User {
 
     public void setPriority(boolean priority) {
         this.priority = priority;
+    }
+
+    public boolean isActive() {
+        return priority ? isActive : false;  // Только для приоритетных пользователей
+    }
+
+    public void setActive(boolean isActive) {
+        if (priority) {
+            this.isActive = isActive;
+        } else {
+            this.isActive = false;  // Не может быть true для обычных пользователей
+        }
     }
 }

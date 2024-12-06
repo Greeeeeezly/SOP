@@ -12,6 +12,24 @@ public class UserDto implements Serializable {
     private String email;
     private boolean priority;
 
+    private boolean isActive;
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public UserDto(Long id, String name, String email, boolean priority, boolean isActive) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.priority = priority;
+        this.isActive = isActive;
+    }
+
     public UserDto(Long id, String name, String email, boolean priority) {
         this.id = id;
         this.name = name;

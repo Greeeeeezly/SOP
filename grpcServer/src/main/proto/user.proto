@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.example.grpcserver";
+option java_outer_classname = "UserProtos";
+option optimize_for = SPEED;
+service UserService {
+  rpc checkUserActive (UserRequest) returns (UserResponse);
+}
+package user;
+
+message UserRequest {
+  int64 userId = 1;
+}
+
+message UserResponse {
+  bool isActive = 1;
+  string message = 2;
+}

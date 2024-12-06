@@ -1,4 +1,4 @@
-package com.example.Sop.models;
+package com.example.grpcserver.models;
 
 import jakarta.persistence.*;
 
