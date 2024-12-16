@@ -1,8 +1,9 @@
 package com.example.Sop.services;
 
-import com.example.Sop.dto.UserDto;
 import com.example.Sop.models.User;
 import com.example.Sop.repositories.UserRepository;
+import com.example.excursionbookingapi.dto.UserDto;
+import com.example.excursionbookingapi.dto.UserRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +34,7 @@ public class UserService {
         return modelMapper.map(user, UserDto.class);
     }
 
-    public UserDto createCustomer(UserDto userDto) {
+    public UserDto createCustomer(UserRequest userDto) {
         User user = modelMapper.map(userDto, User.class);
         User savedUser = userRepository.save(user);
         UserDto mappedCustomer = modelMapper.map(savedUser, UserDto.class);

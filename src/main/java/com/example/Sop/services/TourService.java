@@ -1,8 +1,9 @@
 package com.example.Sop.services;
 
-import com.example.Sop.dto.TourDto;
 import com.example.Sop.models.Tour;
 import com.example.Sop.repositories.TourRepository;
+import com.example.excursionbookingapi.dto.TourDto;
+import com.example.excursionbookingapi.dto.TourRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +34,7 @@ public class TourService {
         return modelMapper.map(tour, TourDto.class);
     }
 
-    public TourDto createTour(TourDto tourDto) {
+    public TourDto createTour(TourRequest tourDto) {
         Tour tour = modelMapper.map(tourDto, Tour.class);
         Tour savedTour = tourRepository.save(tour);
         return modelMapper.map(savedTour, TourDto.class);

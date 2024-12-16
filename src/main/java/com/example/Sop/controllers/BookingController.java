@@ -1,10 +1,9 @@
 package com.example.Sop.controllers;
 
 import com.example.Sop.ActionModel;
-import com.example.Sop.dto.BookingDto;
-import com.example.Sop.dto.BookingRequest;
 import com.example.Sop.services.BookingService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.excursionbookingapi.dto.BookingDto;
+import com.example.excursionbookingapi.dto.BookingRequest;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
@@ -19,7 +18,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/bookings")
-public class BookingController{
+public class BookingController implements com.example.excursionbookingapi.controllers.BookingController {
 
     private BookingService bookingService;
 

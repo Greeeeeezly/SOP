@@ -1,8 +1,8 @@
 package com.example.Sop.controllers;
 
-import com.example.Sop.dto.TourDto;
 import com.example.Sop.services.TourService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.excursionbookingapi.dto.TourDto;
+import com.example.excursionbookingapi.dto.TourRequest;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/tours")
-public class TourController {
+public class TourController implements com.example.excursionbookingapi.controllers.TourController {
 
     private TourService tourService;
 
@@ -37,7 +37,7 @@ public class TourController {
     }
 
     @GetMapping("/{id}")
-    public EntityModel<TourDto> getTourById(@PathVariable Long id) {
+    public EntityModel<com.example.excursionbookingapi.dto.TourDto> getTourById(@PathVariable Long id) {
         TourDto tour = tourService.getTourById(id);
         return EntityModel.of(tour,
                 linkTo(methodOn(TourController.class).getTourById(id)).withSelfRel(),
@@ -45,7 +45,7 @@ public class TourController {
     }
 
     @PostMapping
-    public EntityModel<TourDto> createTour(@RequestBody TourDto tour) {
+    public EntityModel<com.example.excursionbookingapi.dto.TourDto> createTour(@RequestBody TourRequest tour) {
         TourDto createdTour = tourService.createTour(tour);
         return EntityModel.of(createdTour,
                 linkTo(methodOn(TourController.class).getTourById(createdTour.getId())).withSelfRel(),

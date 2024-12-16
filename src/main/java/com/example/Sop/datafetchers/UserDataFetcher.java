@@ -1,7 +1,10 @@
 package com.example.Sop.datafetchers;
 
-import com.example.Sop.dto.UserDto;
 import com.example.Sop.services.UserService;
+import com.example.excursionbookingapi.dto.UserDto;
+import com.example.excursionbookingapi.dto.UserRequest;
+import com.example.excursionbookingapi.exceptions.InvalidArgumentException;
+import com.example.excursionbookingapi.exceptions.UserNotFoundException;
 import com.netflix.graphql.dgs.DgsComponent;
 import com.netflix.graphql.dgs.DgsMutation;
 import com.netflix.graphql.dgs.DgsQuery;
@@ -11,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @DgsComponent
-public class UserDataFetcher {
+public class UserDataFetcher implements com.example.excursionbookingapi.datafetchers.UserDataFetcher {
 
     private final UserService userService;
 
@@ -31,11 +34,12 @@ public class UserDataFetcher {
                 .collect(Collectors.toList());
     }
 
+
     @DgsMutation
     public UserDto addUser(@InputArgument(name = "user") SubmittedUser userInput) {
-        UserDto newUser = new UserDto(userInput.name(), userInput.email(), userInput.priority());
-        newUser.setId(userService.createCustomer(newUser).getId());
-        return newUser;
+        UserRequest newUser = new UserRequest(userInput.name(), userInput.email(), userInput.priority(), userInput.isActive());
+        UserDto createdUser = userService.createCustomer(newUser);
+        return createdUser;
     }
 
     @DgsMutation
@@ -56,5 +60,4 @@ public class UserDataFetcher {
         userService.deleteCustomer(id);
     }
 
-    public record SubmittedUser(String name, String email, Boolean priority) {}
 }

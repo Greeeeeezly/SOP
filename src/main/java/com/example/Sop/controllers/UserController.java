@@ -1,9 +1,9 @@
 package com.example.Sop.controllers;
 
 import com.example.Sop.ActionModel;
-import com.example.Sop.dto.UserDto;
 import com.example.Sop.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.excursionbookingapi.dto.UserDto;
+import com.example.excursionbookingapi.dto.UserRequest;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +17,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/users")
-public class UserController {
+public class UserController implements com.example.excursionbookingapi.controllers.UserController {
 
     private UserService userService;
 
@@ -71,7 +71,7 @@ public class UserController {
     }
 
     @PostMapping
-    public EntityModel<UserDto> createCustomer(@RequestBody UserDto customer) {
+    public EntityModel<UserDto> createCustomer(@RequestBody UserRequest customer) {
         UserDto createdCustomer = userService.createCustomer(customer);
         return EntityModel.of(createdCustomer,
                 linkTo(methodOn(UserController.class).getCustomerById(createdCustomer.getId())).withSelfRel(),

@@ -1,20 +1,20 @@
 package com.example.Sop.datafetchers;
 
-import com.example.Sop.dto.BookingDto;
-import com.example.Sop.dto.UserDto;
-import com.example.Sop.dto.TourDto;
 import com.example.Sop.services.BookingService;
+import com.example.excursionbookingapi.dto.BookingDto;
+import com.example.excursionbookingapi.dto.TourDto;
+import com.example.excursionbookingapi.dto.UserDto;
+import com.example.excursionbookingapi.exceptions.BookingNotFoundException;
+import com.example.excursionbookingapi.exceptions.InvalidArgumentException;
 import com.netflix.graphql.dgs.DgsComponent;
 import com.netflix.graphql.dgs.DgsMutation;
 import com.netflix.graphql.dgs.DgsQuery;
 import com.netflix.graphql.dgs.InputArgument;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
-    @DgsComponent
-    public class BookingDataFetcher {
+@DgsComponent
+    public class BookingDataFetcher implements com.example.excursionbookingapi.datafetchers.BookingDataFetcher {
 
         private final BookingService bookingService;
 
@@ -27,7 +27,8 @@ import java.util.List;
             return bookingService.getAllBookings();
         }
 
-        @DgsMutation
+
+    @DgsMutation
         public String addBooking(@InputArgument SubmittedBooking booking) {
             BookingDto newBooking = new BookingDto();
             UserDto userDto = booking.user();
@@ -40,6 +41,4 @@ import java.util.List;
         public void deleteBooking(@InputArgument Long id) {
             bookingService.deleteBooking(id);
         }
-
-        record SubmittedBooking(UserDto user, TourDto tour) {}
     }

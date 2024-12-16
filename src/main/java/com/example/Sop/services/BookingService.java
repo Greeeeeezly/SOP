@@ -1,5 +1,4 @@
 package com.example.Sop.services;
-import com.example.Sop.dto.BookingDto;
 import com.example.Sop.models.Booking;
 import com.example.Sop.models.Subscription;
 import com.example.Sop.models.Tour;
@@ -8,6 +7,7 @@ import com.example.Sop.repositories.BookingRepository;
 import com.example.Sop.repositories.SubscriptionRepository;
 import com.example.Sop.repositories.TourRepository;
 import com.example.Sop.repositories.UserRepository;
+import com.example.excursionbookingapi.dto.BookingDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
